@@ -45,34 +45,34 @@ for dPad in dPads:
     print(f"D-pad {dPad}: {controller.get_hat(dPad)}")
 
 
-print(f"\033[{axisStart};0H")
+# print(f"\033[{axisStart};0H")
 while True:
     for event in pygame.event.get():
 
         if event.type == pygame.JOYBUTTONUP or event.type == pygame.JOYBUTTONDOWN:
 
-            print(f"\033[{buttonStart};1H", end = "")
-            print(f"\033[{(event.button + 1)}B", end = "")
-            print(f"Button {event.button}: {controller.get_button(event.button)}")
+            # print(f"\033[{buttonStart};1H", end = "")
+            # print(f"\033[{(event.button + 1)}B", end = "")
+            # print(f"Button {event.button}: {controller.get_button(event.button)}")
 
             ser.write(event.button)
 
 
         if event.type == pygame.JOYAXISMOTION:
-            print(f"\033[{axisStart};1H",end="")
-            print(f"\033[{event.axis + 1}B",end="")
-            print("\033[K", end="")
-            print(f"Axis {event.axis}: {controller.get_axis(event.axis)}")
+            # print(f"\033[{axisStart};1H",end="")
+            # print(f"\033[{event.axis + 1}B",end="")
+            # print("\033[K", end="")
+            # print(f"Axis {event.axis}: {controller.get_axis(event.axis)}")
 
-            ser.write(event.axis)
+             ser.write(event.axis)
 
         if event.type == pygame.JOYHATMOTION:
-            print(f"\033[{dPadStart};1H", end="")
-            print(f"\033[{event.hat + 1}B",end="")
-            print("\033[K", end="")
-            print(f"D-pad {event.hat}: {controller.get_hat(event.hat)}")
+            # print(f"\033[{dPadStart};1H", end="")
+            # print(f"\033[{event.hat + 1}B",end="")
+            # print("\033[K", end="")
+            # print(f"D-pad {event.hat}: {controller.get_hat(event.hat)}")
 
-            ser.write(event.hat)
+             ser.write(event.hat)
     print(ser.read())
 
 
