@@ -4,7 +4,8 @@ void setup() {
 
 void loop() {
   if (Serial.available()){
-    float message = Serial.read();
-    Serial.write(message);
+    int message = Serial.read();
+    
+    Serial.print(message);
   }
 }

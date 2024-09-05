@@ -73,7 +73,9 @@ while True:
             # print(f"D-pad {event.hat}: {controller.get_hat(event.hat)}")
 
              ser.write(event.hat)
-    print(ser.read())
+
+    if ser.in_waiting > 0:
+        print(ser.read())
 
 
 
