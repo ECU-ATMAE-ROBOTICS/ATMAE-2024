@@ -4,8 +4,8 @@ void setup() {
 
 void loop() {
   if (Serial.available()){
-    int message = Serial.read();
-    
-    Serial.print(message);
+    String message = Serial.readStringUntil('\n');
+    Serial.print("Arduino recieved: ");
+    Serial.println(message);
   }
 }
