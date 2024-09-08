@@ -1,5 +1,6 @@
 import serial
 import pygame
+import time
 
 
 if __name__ == '__main__':
@@ -12,16 +13,16 @@ if __name__ == '__main__':
     pygame.init()
     controller = pygame.joystick.Joystick(0)
 
-    #Checks for serial connection
-
+    #Tests Serial Communication
     while arduino.in_waiting == 0:
         arduino.write("A\n".encode('utf-8'))
+        time.sleep(1)
 
     print(arduino.readline().decode('utf-8').rstrip())
 
     while True:
        
-        #Detects controller inputs
+        #Detects and sends controller inputs
         for event in pygame.event.get():
             if event.type == pygame.JOYBUTTONUP or  event.type == pygame.JOYBUTTONDOWN:
                 message = f"{event.button}:{controller.get_button(event.button)}\n"
