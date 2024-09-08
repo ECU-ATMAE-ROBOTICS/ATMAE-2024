@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
     #Tests Serial Communication
     while arduino.in_waiting == 0:
-        arduino.write("A\n".encode('utf-8'))
+        arduino.write("Testing\n".encode('utf-8'))
         time.sleep(1)
 
     print(arduino.readline().decode('utf-8').rstrip())
@@ -25,17 +25,17 @@ if __name__ == '__main__':
         #Detects and sends controller inputs
         for event in pygame.event.get():
             if event.type == pygame.JOYBUTTONUP or  event.type == pygame.JOYBUTTONDOWN:
-                message = f"{event.button}:{controller.get_button(event.button)}\n"
+                message = f"B:{event.button}:{controller.get_button(event.button)}\n"
                 arduino.write(message.encode('utf-8'))
 
             if event.type == pygame.JOYAXISMOTION:
                 axisValue = controller.get_axis(event.axis)
-                message = f"{event.axis}:{round(axisValue,2)}\n"
+                message = f"A:{event.axis}:{round(axisValue,2)}\n"
                 arduino.write(message.encode('utf-8'))
 
             if event.type == pygame.JOYHATMOTION:
-               message = f"{event.hat}:{controller.get_hat(event.hat)}\n"
-               arduino.write(message.encode('utf-8'))
+                message = f"D:{event.hat}:{controller.get_hat(event.hat)}\n"
+                arduino.write(message.encode('utf-8'))
 
         #Prints string in the buffer
         if arduino.in_waiting: 
