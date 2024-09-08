@@ -1,6 +1,5 @@
 import pygame
 import time
-import serial
 import os
 
 pygame.init()
@@ -8,7 +7,6 @@ os.system('clear')
 
 try:
     controller = pygame.joystick.Joystick(0)
-    ser = serial.Serial("/dev/ttyACM0" ,9600, timeout=1)
 
 
 except pygame.error:
@@ -51,31 +49,26 @@ while True:
 
         if event.type == pygame.JOYBUTTONUP or event.type == pygame.JOYBUTTONDOWN:
 
-            # print(f"\033[{buttonStart};1H", end = "")
-            # print(f"\033[{(event.button + 1)}B", end = "")
-            # print(f"Button {event.button}: {controller.get_button(event.button)}")
+             print(f"\033[{buttonStart};1H", end = "")
+             print(f"\033[{(event.button + 1)}B", end = "")
+             print(f"Button {event.button}: {controller.get_button(event.button)}")
 
-            ser.write(event.button)
 
 
         if event.type == pygame.JOYAXISMOTION:
-            # print(f"\033[{axisStart};1H",end="")
-            # print(f"\033[{event.axis + 1}B",end="")
-            # print("\033[K", end="")
-            # print(f"Axis {event.axis}: {controller.get_axis(event.axis)}")
+             print(f"\033[{axisStart};1H",end="")
+             print(f"\033[{event.axis + 1}B",end="")
+             print("\033[K", end="")
+             print(f"Axis {event.axis}: {controller.get_axis(event.axis)}")
 
-             ser.write(event.axis)
 
         if event.type == pygame.JOYHATMOTION:
-            # print(f"\033[{dPadStart};1H", end="")
-            # print(f"\033[{event.hat + 1}B",end="")
-            # print("\033[K", end="")
-            # print(f"D-pad {event.hat}: {controller.get_hat(event.hat)}")
+             print(f"\033[{dPadStart};1H", end="")
+             print(f"\033[{event.hat + 1}B",end="")
+             print("\033[K", end="")
+             print(f"D-pad {event.hat}: {controller.get_hat(event.hat)}")
 
-             ser.write(event.hat)
 
-    if ser.in_waiting > 0:
-        print(ser.read())
 
 
 
