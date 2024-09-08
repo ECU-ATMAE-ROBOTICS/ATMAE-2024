@@ -16,6 +16,7 @@ if __name__ == '__main__':
 
     while arduino.in_waiting == 0:
         arduino.write("A\n".encode('utf-8'))
+
     print(arduino.readline().decode('utf-8').rstrip())
 
     while True:
@@ -32,9 +33,9 @@ if __name__ == '__main__':
                 arduino.write(message.encode('utf-8'))
 
             if event.type == pygame.JOYHATMOTION:
- 
                message = f"{event.hat}:{controller.get_hat(event.hat)}\n"
                arduino.write(message.encode('utf-8'))
+
         #Prints string in the buffer
         if arduino.in_waiting: 
             response = arduino.readline().decode('utf-8').rstrip()
