@@ -1,43 +1,36 @@
 import serial
+import struct
 import pygame
 import time
-
 
 if __name__ == '__main__':
     arduino = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
     arduino.reset_input_buffer()
     arduino.reset_output_buffer()
 
-    message = ""
-
     pygame.init()
     controller = pygame.joystick.Joystick(0)
 
-    #Tests Serial Communication
-    while arduino.in_waiting == 0:
-        arduino.write("Testing\n".encode('utf-8'))
-        time.sleep(1)
-
-    print(arduino.readline().decode('utf-8').rstrip())
-
-    while True:
-       
+    while True: 
         #Detects and sends controller inputs
         for event in pygame.event.get():
             if event.type == pygame.JOYBUTTONUP or  event.type == pygame.JOYBUTTONDOWN:
-                message = f"B:{event.button}:{controller.get_button(event.button)}\n"
-                arduino.write(message.encode('utf-8'))
+                value = int(controller.get_button(event.button))
+                arduino.write(struct.pack("ii", event.button, value)
 
             if event.type == pygame.JOYAXISMOTION:
                 axisValue = controller.get_axis(event.axis)
-                message = f"A:{event.axis}:{round(axisValue,2)}\n"
-                arduino.write(message.encode('utf-8'))
+                arduino.write(struct.pack("if", event.axis + 15, axisValue))
 
             if event.type == pygame.JOYHATMOTION:
-                message = f"D:{event.hat}:{controller.get_hat(event.hat)}\n"
-                arduino.write(message.encode('utf-8'))
+                value = 0
+                
+                match controller.get_hat(event.hat) {
+                    case (0, 1): value = 0
+                    case (-1, 0): value = 1
+                    case (0, -1): value = 2
+                    case (1, 0): value = 3
+                }
 
-        #Prints string in the buffer
-        if arduino.in_waiting: 
-            response = arduino.readline().decode('utf-8').rstrip()
-            print(response)
+                arduino.write(struct.pack("ii", 21, value)
+
