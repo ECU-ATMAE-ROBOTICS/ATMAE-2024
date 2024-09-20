@@ -1,15 +1,16 @@
 from XboxController import XboxController
 import asyncio
 
-controller = XboxController()
+controller = XboxController(deadZone=.5)
 
 async def main():
 
-    controller.getMappedButtons()
+    controller.getDetectedButtons()
 
     while True:
-        value = await controller.getControllerInput()
-        if value != None:
-            print(value)
+        instructions = await controller.getControllerInput()
+        if instructions != None:
+            for instruction in instructions:
+                print(instruction)
     
 asyncio.run(main())

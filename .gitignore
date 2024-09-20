@@ -15,4 +15,10 @@ pyvenv.cfg
 .venv
 pip-selfcheck.json
 
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
 # End of https://www.toptal.com/developers/gitignore/api/venv
