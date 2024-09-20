@@ -1,13 +1,16 @@
 import pygame
 import time
 import os
+from platform import system
 
-pygame.init()
-os.system('clear')
+if (system() == "Windows"):
+    os.system('cls')
+else:
+    os.system('clear')
 
 try:
+    pygame.init()
     controller = pygame.joystick.Joystick(0)
-
 
 except pygame.error:
     print("Controller Not Found by Pygame")
