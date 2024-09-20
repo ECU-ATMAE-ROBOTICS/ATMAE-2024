@@ -49,11 +49,11 @@ class XboxController():
                     value = f"{dictVal[0]}:{0}"
                 elif dPadVal == (0,1):
                     value = f"{dictVal[1]}:{1}"
-                if dPadVal == (1,0):
+                elif dPadVal == (1,0):
                     value = f"{dictVal[2]}:{2}"
-                if dPadVal == (0,-1):
+                elif dPadVal == (0,-1):
                     value = f"{dictVal[3]}:{3}"
-                if dPadVal == (-1,0):
+                elif dPadVal == (-1,0):
                     value = f"{dictVal[4]}:{4}"
 
                 return value
