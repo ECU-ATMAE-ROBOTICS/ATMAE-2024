@@ -6,35 +6,15 @@ import sys
 import time
 import asyncio
 
+#internal files
+from XboxController.XboxController import XboxController
+
 
 pygame.init()
 controller = pygame.joystick.Joystick(0)
 DEAD_ZONE = .3
 
-#Gets the values from the controller
-async def getControllerInput():
-    value = None
-    for event in pygame.event.get():
-        if event.type == pygame.JOYBUTTONUP or  event.type == pygame.JOYBUTTONDOWN:
-            value = f"B:{event.button}:{controller.get_button(event.button)}\n"
-            #arduino.write(message.encode('utf-8'))
-            return value
 
-        if event.type == pygame.JOYAXISMOTION:
-            axisValue = controller.get_axis(event.axis)
-        
-            if axisValue > DEAD_ZONE or axisValue < DEAD_ZONE*-1 or event.axis == 4 or event.axis == 5:
-                value = f"A:{event.axis}:{round(axisValue,2)}\n"
-
-            else:
-                value = f"A:{event.axis}:{0}\n"
-            #arduino.write(message.encode('utf-8'))
-            return value
-
-        if event.type == pygame.JOYHATMOTION:
-            value = f"D:{event.hat}:{controller.get_hat(event.hat)}\n"
-            #arduino.write(message.encode('utf-8'))
-            return value
 
 async def main():
     arduino = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
@@ -53,10 +33,9 @@ async def main():
     while True:
 
         #Detects and sends controller inputs
-        prevMessage = str(message)
-        message = await getControllerInput()
+        message = await controller.getControllerInput()
 
-        if message != None and message != prevMessage:
+        if message != None:
             arduino.write(message.encode('utf-8'))
 
         #Prints string in the buffer
