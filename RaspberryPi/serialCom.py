@@ -1,25 +1,47 @@
 #pip libs
 import serial
+
 import pygame
 import sys
 #built-in libs
 import time
 import asyncio
+import logging
+
+import serial.serialutil
 
 #internal files
 from XboxController.XboxController import XboxController
-
-
-pygame.init()
-controller = pygame.joystick.Joystick(0)
-DEAD_ZONE = .3
+    
 
 
 
 async def main():
-    arduino = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-    arduino.reset_input_buffer()
-    arduino.reset_output_buffer()
+    
+    #Connect to the Arduino
+    connected = False
+    while not connected:
+        try:
+            arduino = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+            arduino.reset_input_buffer()
+            arduino.reset_output_buffer()
+        except serial.serialutil.SerialException:
+            logging.error("Couldn't connect to Arduino")
+            time.sleep(1)
+
+    connected = False
+
+    #Connect to the Xbox Controller
+    while not connected:
+        try:
+            pygame.init()
+            controller = XboxController(deadZone=.25)
+            connected = True
+        except pygame.error:
+            logging.error("Couldn't connect to controller")
+            pygame.joystick.quit()
+        time.sleep(1)
+
     
     message = None
 
@@ -33,10 +55,11 @@ async def main():
     while True:
 
         #Detects and sends controller inputs
-        message = await controller.getControllerInput()
+        instructions = controller.getControllerInput()
 
-        if message != None:
-            arduino.write(message.encode('utf-8'))
+        if instructions != None:
+            for instruction in instructions:
+                arduino.write(message.encode('utf-8'))
 
         #Prints string in the buffer
         if arduino.in_waiting: 

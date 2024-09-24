@@ -2,19 +2,24 @@ import pygame
 import time
 import os
 from platform import system
+import logging
+
+
+connected = False
+while not connected:
+    try:
+        pygame.init()
+        controller = pygame.joystick.Joystick(0)
+        connected = True
+    except pygame.error:
+        logging.error("Couldn't connect to controller")
+        pygame.joystick.quit()
+    time.sleep(1)
 
 if (system() == "Windows"):
     os.system('cls')
 else:
     os.system('clear')
-
-try:
-    pygame.init()
-    controller = pygame.joystick.Joystick(0)
-
-except pygame.error:
-    print("Controller Not Found by Pygame")
-    exit()
 
 axes = [axis for axis in range(controller.get_numaxes())]
 buttons = [button for button in range(controller.get_numbuttons())]
