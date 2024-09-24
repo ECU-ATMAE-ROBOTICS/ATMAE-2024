@@ -39,7 +39,7 @@ class XboxController():
         for event in pygame.event.get():
             if event.type == pygame.JOYBUTTONUP or  event.type == pygame.JOYBUTTONDOWN:
                 dictVal = self.inputIDs.get("B")
-                value = f"{dictVal[event.button]}:{self.controller.get_button(event.button)}"
+                value = f"{dictVal[event.button]}:{self.controller.get_button(event.button)}\n"
                 message.append(value)
 
             if event.type == pygame.JOYAXISMOTION:
@@ -47,29 +47,33 @@ class XboxController():
                 dictVal = self.inputIDs.get("A")
             
                 if axisValue > self.deadZone or axisValue < self.deadZone*-1 or event.axis == 4 or event.axis == 5:
-                    value = f"{dictVal[event.axis]}:{axisValue}"
+                    value = f"{dictVal[event.axis]}:{axisValue}\n"
+                    message.append(value)
+                else:
+                    
+                    value = f"{dictVal[event.axis]}:0\n"
                     message.append(value)
 
             if event.type == pygame.JOYHATMOTION:
                 dictVal = self.inputIDs.get("D")
                 dPadVal = self.controller.get_hat(event.hat)
                 if dPadVal == (0,0):
-                    value = f"{dictVal[0]}:{0}"
+                    value = f"{dictVal[0]}:{0}\n"
                     message.append(value)
                 elif dPadVal == (0,1):
-                    value = f"{dictVal[1]}:{1}"
+                    value = f"{dictVal[1]}:{1}\n"
                     message.append(value)
 
                 elif dPadVal == (1,0):
-                    value = f"{dictVal[2]}:{2}"
+                    value = f"{dictVal[2]}:{2}\n"
                     message.append(value)
 
                 elif dPadVal == (0,-1):
-                    value = f"{dictVal[3]}:{3}"
+                    value = f"{dictVal[3]}:{3}\n"
                     message.append(value)
 
                 elif dPadVal == (-1,0):
-                    value = f"{dictVal[4]}:{4}"
+                    value = f"{dictVal[4]}:{4}\n"
                     message.append(value)
 
         return message

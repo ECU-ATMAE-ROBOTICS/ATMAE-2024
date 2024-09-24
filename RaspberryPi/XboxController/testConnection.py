@@ -12,7 +12,7 @@ while not connected:
         controller = pygame.joystick.Joystick(0)
         connected = True
     except pygame.error:
-        logging.error("Couldn't connect to controller")
+        print("Couldn't connect to controller")
         pygame.joystick.quit()
     time.sleep(1)
 
