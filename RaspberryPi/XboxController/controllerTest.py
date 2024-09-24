@@ -1,7 +1,7 @@
 from XboxController import XboxController
 import asyncio
 
-controller = XboxController(deadZone=.5)
+controller = XboxController(deadZone=.25)
 
 async def main():
 

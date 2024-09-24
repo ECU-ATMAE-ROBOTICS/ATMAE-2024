@@ -1,6 +1,5 @@
 #pip libs
 import serial
-
 import pygame
 import sys
 #built-in libs

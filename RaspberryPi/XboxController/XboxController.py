@@ -50,9 +50,11 @@ class XboxController():
                     value = f"{dictVal[event.axis]}:{axisValue}\n"
                     message.append(value)
                 else:
-                    
                     value = f"{dictVal[event.axis]}:0\n"
                     message.append(value)
+                    
+
+                            
 
             if event.type == pygame.JOYHATMOTION:
                 dictVal = self.inputIDs.get("D")
