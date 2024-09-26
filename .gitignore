@@ -20,5 +20,6 @@ pip-selfcheck.json
 __pycache__/
 *.py[cod]
 *$py.class
+XboxController/__pycache__
 
 # End of https://www.toptal.com/developers/gitignore/api/venv
