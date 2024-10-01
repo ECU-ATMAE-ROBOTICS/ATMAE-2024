@@ -54,7 +54,8 @@ async def main():
 
     print(arduino.readline().decode("utf-8").rstrip())
     logging.info("Ending Testing")
-
+    
+    prevInstruction = None
     while True:
         # Detects and sends controller inputs
         instructions = None
