@@ -9,14 +9,14 @@ def getDigitalAxis(instruction):
 
     if ID in validSticks:
         if value > 0:
-            return f"{ID}:1.0\n"
+            return f"{ID}:1\n"
         elif value < 0:
-            return f"{ID}:-1.0\n"
+            return f"{ID}:-1\n"
         else:
             return f"{ID}:0\n"
         
     elif ID in validTriggers:
         if value > -.35:
-            return f"{ID}:1.0\n"
+            return f"{ID}:1\n"
         else:
             return f"{ID}:0\n"
