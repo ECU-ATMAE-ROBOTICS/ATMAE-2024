@@ -9,11 +9,11 @@ This project involves building a robot designed to compete in a 1v1v1v1 object c
 - Rubrics: https://cdn.ymaws.com/www.atmae.org/resource/resmgr/2024conference/REV-FINAL-ATMAE_SDRC_24_Rubr.pdf
 
 ## Hardware
-Raspberry Pi 4: Acts as the main control unit and recieves in the input from the Xbox controller and sends it to the Ardunio over serial. The Raspberry Pi is also used to stream a video to a phone.
-Arduino Giga R1 WiFi: Handles low-level control of motors, sensors, and other parses the serial from the Pi. It communicates with the Raspberry Pi via serial.
+- Raspberry Pi 4: Acts as the main control unit and recieves in the input from the Xbox controller and sends it to the Ardunio over serial. The Raspberry Pi is also used to stream a video to a phone.
+- Arduino Giga R1 WiFi: Handles low-level control of motors, sensors, and other parses the serial from the Pi. It communicates with the Raspberry Pi via serial.
 ## Key Components:
-Motors: TBD
-Smart Sensors: Camera streaming to phone
-Servo/Linear Actuators: TBD
-Power Supply: TBD
+- Motors: TBD
+- Smart Sensors: Camera streaming to phone
+- Servo/Linear Actuators: TBD
+- Power Supply: TBD
 
