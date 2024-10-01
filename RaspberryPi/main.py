@@ -13,6 +13,7 @@ import os
 
 # internal files
 from XboxController.XboxController import XboxController
+from Util.util import *
 
 script_dir = os.path.dirname(__file__)
 subprocess.Popen([sys.executable, "camera/stream.py"], cwd=script_dir)
@@ -42,6 +43,7 @@ async def main():
             logging.error("Couldn't connect to controller")
             pygame.joystick.quit()
         time.sleep(1)
+    
 
     logging.info("Starting Testing")
 
@@ -52,6 +54,7 @@ async def main():
 
     print(arduino.readline().decode("utf-8").rstrip())
     logging.info("Ending Testing")
+
     while True:
         # Detects and sends controller inputs
         instructions = None
@@ -59,7 +62,18 @@ async def main():
 
         if instructions != None:
             for instruction in instructions:
-                arduino.write(instruction.encode("utf-8"))
+                instructionID = int(instruction[:instruction.find(":")])
+                
+                if instructionID in validSticks or instructionID in validTriggers:
+                    instruction = getDigitalAxis(instruction)
+                    
+                    if prevInstruction != instruction:
+                        arduino.write(instruction.encode("utf-8"))
+
+                    prevInstruction = instruction
+                
+                elif instructionID not in controller.inputIDs.get("A"):
+                    arduino.write(instruction.encode("utf-8"))
 
         # Prints string in the buffer
         if arduino.in_waiting:

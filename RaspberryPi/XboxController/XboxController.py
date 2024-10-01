@@ -2,8 +2,15 @@ import serial
 import pygame
 
 class XboxController():
-
+    """Class used to interface with an XboxController."""
     def __init__(self, controllerNum : int = 0, deadZone : float = 0):
+        """
+            Initialize an Xbox Controller
+
+            Args:
+                controllerNum (int) [default = 0]: Index to be used by pygame.joystick.Joystick().
+                deadZone (float) [default = 0]: Distance the stick can move from neutral position before registering input.
+        """
         pygame.init()
         
         self.controller = pygame.joystick.Joystick(controllerNum)
@@ -19,7 +26,7 @@ class XboxController():
                          "A":[id for id in range(self.numDpadButtons, self.total-self.numButtons)], 
                          "B":[id for id in range(self.total-self.numButtons , self.total)]}
     
-    def getDetectedButtons(self):
+    def getLayout(self):
         for buttonType in self.inputIDs.keys():
             print(f"{buttonType}: {self.inputIDs.get(buttonType)}")
     
@@ -33,8 +40,17 @@ class XboxController():
         return self.controller.get_hat(dPadID)
 
 
-    #Gets the values from the controller
+    
     async def getControllerInput(self):
+
+        """Retrieves the value of any new inputs from the value. The function only detects input if its value
+    has changed.
+
+    Returns:
+        string list: A list containing multiple values from multiple buttons/triggers/joysticks
+                     from the controller in the format: [Input ID]:[Input Value].
+
+    """
         message = []
         for event in pygame.event.get():
             if event.type == pygame.JOYBUTTONUP or  event.type == pygame.JOYBUTTONDOWN:
