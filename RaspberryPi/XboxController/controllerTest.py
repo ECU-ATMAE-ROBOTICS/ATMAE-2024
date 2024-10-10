@@ -1,11 +1,14 @@
 from XboxController import XboxController
 import asyncio
 
+#Python file for testing changes in controller code prior to being put in main
+
+
 controller = XboxController(deadZone=.25)
 
 validSticks = [5]
 validTriggers = [9, 10]
-
+prevInstructions = {5:0.0, 9:0.0, 10:0.0}
 
 
 def getDigitalAxis(instruction):
@@ -33,8 +36,6 @@ def getDigitalAxis(instruction):
 async def main():
 
     controller.getLayout()
-    
-    prevInstruction = None
 
     while True:
         instructions = await controller.getControllerInput()
@@ -42,17 +43,17 @@ async def main():
         if instructions != None:
             for instruction in instructions:
                 instructionID = int(instruction[:instruction.find(":")])
+                instructionValue = float(instruction[instruction.find(":")+1:])
                 
                 if instructionID in validSticks or instructionID in validTriggers:
-                    instruction = getDigitalAxis(instruction)
-                    
-                    if prevInstruction != instruction:
-                        print(instruction)
 
-                    prevInstruction = instruction
+                    if prevInstructions.get(instructionID) != instructionValue:
+                        print(instruction, end='')
+
+                    prevInstructions[instructionID] = instructionValue
                 
                 elif instructionID not in controller.inputIDs.get("A"):
-                    print(instruction)
+                    print(instruction, end='')
                 
                     
     

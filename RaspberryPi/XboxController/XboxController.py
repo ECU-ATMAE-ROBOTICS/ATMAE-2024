@@ -59,7 +59,7 @@ class XboxController():
                 message.append(value)
 
             if event.type == pygame.JOYAXISMOTION:
-                axisValue = round(self.controller.get_axis(event.axis),2)
+                axisValue = round(self.controller.get_axis(event.axis),1)
                 dictVal = self.inputIDs.get("A")
             
                 if axisValue > self.deadZone or axisValue < self.deadZone*-1 or event.axis == 4 or event.axis == 5:

@@ -64,14 +64,14 @@ async def main():
         if instructions != None:
             for instruction in instructions:
                 instructionID = int(instruction[:instruction.find(":")])
+                instructionValue = float(instruction[instruction.find(":")+1:])
                 
                 if instructionID in validSticks or instructionID in validTriggers:
-                    instruction = getDigitalAxis(instruction)
                     
-                    if prevInstruction != instruction:
+                    if prevInstructions.get(instructionID) != instructionValue:
                         arduino.write(instruction.encode("utf-8"))
 
-                    prevInstruction = instruction
+                    prevInstructions[instructionID] = instructionValue
                 
                 elif instructionID not in controller.inputIDs.get("A"):
                     arduino.write(instruction.encode("utf-8"))
