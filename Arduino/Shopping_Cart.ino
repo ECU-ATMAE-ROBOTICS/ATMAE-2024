@@ -62,16 +62,17 @@ void loop() {
     }
   }
 
-  if (button_id == 2) {
-    // DPAD east 
-    leftservo.writeMicroseconds(2000); //180
-    rightservo.writeMicroseconds(1500); //90
-  }
 
-  if (button_id == 4) {
-    // DPAD west 
-    leftservo.writeMicroseconds(1500); //90
-    rightservo.writeMicroseconds(2000); //180
+  if (button_id == 5){
+    //X axis on Left Joystick
+      if (axis_val == -1){
+        leftservo.writeMicroseconds(1500); //90
+        rightservo.writeMicroseconds(2000); //180
+      }
+      if (axis_val == 1){
+        leftservo.writeMicroseconds(2000); //180
+        rightservo.writeMicroseconds(1500); //90
+      }
   }
 
   if (button_id == 9) {
