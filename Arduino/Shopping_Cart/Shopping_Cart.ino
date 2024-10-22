@@ -9,7 +9,13 @@ int ind1;
 int button_id;
 double axis_val;
 double triggerValue;
-double degreeValue;
+double turnValue;
+
+double LturnValue;
+double RturnValue;
+
+double LMotor;
+double RMotor;
 
 String receivedData = "";
 
@@ -57,54 +63,33 @@ void loop() {
     digitalWrite(LED_PIN, HIGH);
   }
 
-  if (button_id == 11) {
-    // A button
-    for (pos = 0; pos <= 90; pos += 1) {
-      leftservo.write(pos);
-      rightservo.write(pos);
-      delay(15);
-    }
-  }
+  // if (button_id == 11) {
+  //   // A button
+  //   for (pos = 0; pos <= 90; pos += 1) {
+  //     leftservo.write(pos);
+  //     rightservo.write(pos);
+  //     delay(15);
+  //   }
+  // }
 
+  //****Testing*****
+    //Forwards
+    LMotor = 1500 - 500 * triggerValue * (1 - RturnValue);
+    RMotor = 1500 + 500 * triggerValue * (1 - LturnValue);
 
-  if (button_id == 5){
-    //X axis on Left Joystick
-    if (degreeValue > 0){
-      rightservo.writeMicroseconds((1750 + 250 * triggerValue - 250 * abs(degreeValue)));
-      leftservo.writeMicroseconds((1250 - 250 * triggerValue));
-    }
-    if (degreeValue < 0){
-      rightservo.writeMicroseconds((1750 + 250 * triggerValue));
-      leftservo.writeMicroseconds((1250 - 250 * triggerValue + 250 * abs(degreeValue)));
-    }
-    if (degreeValue == 0) {
-      rightservo.writeMicroseconds((1750 + 250 * triggerValue));
-      leftservo.writeMicroseconds((1250 - 250 * triggerValue));
-    }
-  }
+    //leftservo.write((1500 + 500 * triggerValue) - 500 * RturnValue);
+    //rightservo.write((1500 - 500 * triggerValue) + 500 * LturnValue);
 
-  if (button_id == 9) {
-    // Right Trigger
-    rightservo.writeMicroseconds((1750 + 250 * triggerValue));
-    leftservo.writeMicroseconds((1250 - 250 * triggerValue));
-  }
+    leftservo.write(LMotor);
+    //Serial.print(" ");
+    rightservo.write(RMotor);
 
-  if (button_id == 10) {
-  // Left trigger
-    leftservo.writeMicroseconds((1750 + 250 * triggerValue));
-    rightservo.writeMicroseconds((1250 - 250 * triggerValue));
-  }
-
-  if (button_id == 12){
-    //B Button
-    leftservo.writeMicroseconds(1500); //90
-    rightservo.writeMicroseconds(1500); //90
-  }
-
-
-  button_id = 0;
-  axis_val = 0;
-
+  // if (button_id == 12){
+  //   //B Button
+  //   leftservo.writeMicroseconds(1500); //90
+  //   rightservo.writeMicroseconds(1500); //90
+    
+  // }
 }
 void parseData(String data) {
     int splitIndex = data.indexOf(':');  // Find where the ';' is
@@ -114,28 +99,51 @@ void parseData(String data) {
 
         // Convert to int and double
         button_id = buttonStr.toInt();
-        //axis_val = axisStr.toDouble();
-        if (button_id == 9){
-          triggerValue = axisStr.toDouble();
+        axis_val = axisStr.toDouble();
+
+        if (button_id == 10){
+          triggerValue = ((1* (1+axis_val))/2);
         }
+        else if(button_id == 9){
+          triggerValue = -((1* (1+axis_val))/2);
+        }
+
+
         if (button_id == 5) {
-          degreeValue == axisStr.toDouble();
+          //turnValue = axis_val;
+
+          //***Testing****
+          if(axis_val < 0){
+            RturnValue = -1 * axis_val;
+            LturnValue = 0;
+          }
+          else if (axis_val > 0){
+            LturnValue = axis_val;
+            RturnValue = 0;
+          }
+          else{
+            RturnValue = 0;
+            LturnValue = 0;
+          }
+          
+
         }
+
         // Debugging prints
         //Serial.print("Raw Data: ");
-        Serial.println(data);
+        //Serial.println(data);
         //Serial.print("Button (as string): ");
-        Serial.println(buttonStr);
+        //Serial.println(buttonStr);
         //Serial.print("Axis Value (as string): ");
-        Serial.println(axisStr);
+        //Serial.println(axisStr);
     } else {
         // Error handling if data doesn't contain ';'
-        Serial.println("Error: Invalid data format. No ':' found.");
+        Serial.println("Error");
     }
 
     // Print the parsed values for debugging
     //Serial.print("Parsed Button: ");
-    Serial.println(button_id);
+    //Serial.println(button_id);
     //Serial.print("Parsed Value: ");
-    Serial.println(axis_val);
+    //Serial.println(axis_val);
 }

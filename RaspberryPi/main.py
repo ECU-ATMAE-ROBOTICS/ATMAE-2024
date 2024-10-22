@@ -81,5 +81,7 @@ async def main():
             response = arduino.readline().decode("utf-8").rstrip()
             print(response)
 
+        await asyncio.sleep(0.02)
+
 
 asyncio.run(main())
