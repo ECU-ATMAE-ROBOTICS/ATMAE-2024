@@ -29,7 +29,7 @@ async def main():
             connected = True
         except serial.serialutil.SerialException:
             logging.error("Couldn't connect to Arduino")
-            time.sleep(1)
+            await asyncio.sleep(1)
 
     connected = False
 
@@ -42,7 +42,7 @@ async def main():
         except pygame.error:
             logging.error("Couldn't connect to controller")
             pygame.joystick.quit()
-        time.sleep(1)
+        await asyncio.sleep(1)
     
 
     logging.info("Starting Testing")
@@ -50,9 +50,9 @@ async def main():
     # Tests Serial Communication
     while arduino.in_waiting == 0:
         arduino.write("Testing\n".encode("utf-8"))
-        time.sleep(1)
+        await asyncio.sleep(1)
 
-    print(arduino.readline().decode("utf-8").rstrip())
+    print(arduino.readline().rstrip())
     logging.info("Ending Testing")
     
     prevInstruction = None
@@ -78,8 +78,18 @@ async def main():
 
         # Prints string in the buffer
         if arduino.in_waiting:
-            response = arduino.readline().decode("utf-8").rstrip()
+            response = arduino.readline().rstrip()
             print(response)
+            if response.decode() == "kys":
+                print("Killing self")
+                await asyncio.sleep(15)
+                print("Starting up")
+
+            elif response.decode() == "Auto":
+                print("Autonomous Started")
+                await asyncio.sleep(20)
+                print("Autonomous Ended")
+                
 
         await asyncio.sleep(0.02)
 
