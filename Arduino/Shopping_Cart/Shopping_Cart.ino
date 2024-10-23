@@ -1,4 +1,4 @@
-#define LED_PIN 12
+#define LED_PIN 11
 
 #include <ezButton.h>
 
@@ -20,9 +20,10 @@ double RMotor;
 String receivedData = "";
 
 int pos;
+boolean Autonomous = false;
 
 
-ezButton limitSwitch(11);
+ezButton limitSwitch(12);
 Servo leftservo;
 Servo rightservo;
 
@@ -49,15 +50,19 @@ void loop() {
     }
   }
 
+  //Freeze Button
   limitSwitch.loop();
   if (limitSwitch.isPressed()) {
-    leftservo.write(90);
-    rightservo.write(90);
+    axis_val = 0;
     Serial.println("kys");
+
+    leftservo.write(1500);
+    rightservo.write(1500);
+    
     for (int i = 1; i < 16; i++) {
       digitalWrite(LED_PIN, HIGH);  // Turn LED on
       delay(250);
-      digitalWrite(LED_PIN, LOW);   // Turn LED off
+      digitalWrite(LED_PIN, LOW);  // Turn LED off
       delay(250);
     }
     digitalWrite(LED_PIN, HIGH);
@@ -72,78 +77,107 @@ void loop() {
   //   }
   // }
 
-  //****Testing*****
-    //Forwards
+  //Autonomous
+  if (Autonomous){
+    Serial.println("Auto");
+    
+    leftservo.write(1250);
+    rightservo.write(1750);
+
+    delay(4000);
+
+    Serial.println("Auto Ended");
+    leftservo.write(1500);
+    rightservo.write(1500);
+
+    Autonomous = false;
+  }
+
+  //*****This is to be tested, not sure if works****** */
+  //Steers while moving
+  if (triggerValue > 0.1 || triggerValue < -0.1){
     LMotor = 1500 - 500 * triggerValue * (1 - RturnValue);
     RMotor = 1500 + 500 * triggerValue * (1 - LturnValue);
 
-    //leftservo.write((1500 + 500 * triggerValue) - 500 * RturnValue);
-    //rightservo.write((1500 - 500 * triggerValue) + 500 * LturnValue);
+  } 
+  //Turn in place
+  else if (button_id == 5){
 
-    leftservo.write(LMotor);
-    //Serial.print(" ");
-    rightservo.write(RMotor);
+    //Motors will both be set to the same value since they're inverted
+    LMotor = 1500 + 500 * axis_val;
+    RMotor = 1500 + 500 * axis_val;
+  }
 
-  // if (button_id == 12){
+  leftservo.write(LMotor);
+  rightservo.write(RMotor);
+
+
+
+  // if (button_id == 12 && axis_val == 1.0) {
   //   //B Button
-  //   leftservo.writeMicroseconds(1500); //90
-  //   rightservo.writeMicroseconds(1500); //90
-    
-  // }
+  //   Serial.println("Stopped");
+  //   leftservo.writeMicroseconds(1500);   //90
+  //   rightservo.writeMicroseconds(1500);  //90
+  //}
 }
 void parseData(String data) {
-    int splitIndex = data.indexOf(':');  // Find where the ';' is
-    if (splitIndex != -1) {  // Ensure ';' exists in the data
-        String buttonStr = data.substring(0, splitIndex);
-        String axisStr = data.substring(splitIndex + 1);
+  int splitIndex = data.indexOf(':');  // Find where the ';' is
+  if (splitIndex != -1) {              // Ensure ';' exists in the data
+    String buttonStr = data.substring(0, splitIndex);
+    String axisStr = data.substring(splitIndex + 1);
 
-        // Convert to int and double
-        button_id = buttonStr.toInt();
-        axis_val = axisStr.toDouble();
+    // Convert to int and double
+    button_id = buttonStr.toInt();
+    axis_val = axisStr.toDouble();
 
-        if (button_id == 10){
-          triggerValue = ((1* (1+axis_val))/2);
-        }
-        else if(button_id == 9){
-          triggerValue = -((1* (1+axis_val))/2);
-        }
-
-
-        if (button_id == 5) {
-          //turnValue = axis_val;
-
-          //***Testing****
-          if(axis_val < 0){
-            RturnValue = -1 * axis_val;
-            LturnValue = 0;
-          }
-          else if (axis_val > 0){
-            LturnValue = axis_val;
-            RturnValue = 0;
-          }
-          else{
-            RturnValue = 0;
-            LturnValue = 0;
-          }
-          
-
-        }
-
-        // Debugging prints
-        //Serial.print("Raw Data: ");
-        //Serial.println(data);
-        //Serial.print("Button (as string): ");
-        //Serial.println(buttonStr);
-        //Serial.print("Axis Value (as string): ");
-        //Serial.println(axisStr);
-    } else {
-        // Error handling if data doesn't contain ';'
-        Serial.println("Error");
+    //Throttle
+    if (button_id == 10) {
+      triggerValue = ((1 * (1 + axis_val)) / 2);
+    } else if (button_id == 9) {
+      triggerValue = -((1 * (1 + axis_val)) / 2);
     }
 
-    // Print the parsed values for debugging
-    //Serial.print("Parsed Button: ");
-    //Serial.println(button_id);
-    //Serial.print("Parsed Value: ");
-    //Serial.println(axis_val);
+    //Turning
+    if (button_id == 5) {
+      
+      //Left
+      if (axis_val < 0) {
+        RturnValue = -1 * axis_val;
+        LturnValue = 0;
+      
+      //Right
+      } else if (axis_val > 0) {
+        LturnValue = axis_val;
+        RturnValue = 0;
+
+      //Straight
+      } else {
+        RturnValue = 0;
+        LturnValue = 0;
+      }
+    }
+
+    //Pause button on controller for Auto
+    if(button_id == 22 && !Autonomous && axis_val == 1.0){
+      axis_val = 0;
+      Autonomous = true;
+    }
+
+    // Debugging prints
+    //Serial.print("Raw Data: ");
+    //Serial.println(data);
+    //Serial.print("Button (as string): ");
+    //Serial.println(buttonStr);
+    //Serial.print("Axis Value (as string): ");
+    //Serial.println(axisStr);
+  } else {
+    // Error handling if data doesn't contain ';'
+    Serial.println("Err");
+  }
+
+  // Print the parsed values for debugging
+  //Serial.print("Parsed Button: ");
+  //Serial.println(button_id);
+  //Serial.print("Parsed Value: ");
+  //Serial.println(axis_val);
 }
