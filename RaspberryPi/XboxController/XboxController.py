@@ -26,16 +26,34 @@ class XboxController():
                          "A":[id for id in range(self.numDpadButtons, self.total-self.numButtons)], 
                          "B":[id for id in range(self.total-self.numButtons , self.total)]}
     
+    """
+    Prints the layout of the detected buttons on the XboxController
+    """
     def getLayout(self):
         for buttonType in self.inputIDs.keys():
             print(f"{buttonType}: {self.inputIDs.get(buttonType)}")
     
+    """
+    Returns the value of a button
+    Args:
+        ButtonID (int): The id of the button
+    """
     def getRawButton(self, buttonID : int) -> int:
         return self.controller.get_button(buttonID)
     
+    """
+    Returns the value of a axis
+    Args:
+        axisID (int): The id of the axis
+    """
     def getRawAxis(self, axisID : int) -> float:
         return self.controller.get_axis(axisID)
     
+    """
+    Returns the value of a axis
+    Args:
+        d-pad ID (int): The id of the axis
+    """
     def getRawdPad(self, dPadID : int) -> tuple[int,int]:
         return self.controller.get_hat(dPadID)
 

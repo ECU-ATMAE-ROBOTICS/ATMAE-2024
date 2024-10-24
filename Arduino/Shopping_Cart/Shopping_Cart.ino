@@ -8,29 +8,33 @@
 
 #include <Servo.h>
 
-int ind1;
-
+//Instruction ID and Value received from the Pi
+String receivedData = "";
 int button_id;
 double axis_val;
-double triggerValue;
-double turnValue;
 
+//Value for determining robot speed
+double triggerValue;
+
+//Ratio to slow each motor for turning
 double LturnValue;
 double RturnValue;
 
+//PWM values passed to the motors
 double LMotor = 1500;
 double RMotor = 1500;
 
-String receivedData = "";
-
-int pos;
+//Determines if the bot is auto
 boolean Autonomous = false;
-
 
 ezButton limitSwitch(12);
 Servo leftservo;
 Servo rightservo;
 
+/*
+Parses instructions from the PI
+to determine robot movement
+*/
 void parseData(String data);
 
 void setup() {
@@ -39,6 +43,8 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
   limitSwitch.setDebounceTime(50);
   digitalWrite(LED_PIN, HIGH);
+
+  //Initialize the servos
   leftservo.attach(2);
   rightservo.attach(3);
 }
@@ -75,7 +81,7 @@ void loop() {
     Serial.println(limitSwitch.isPressed());
   }
 
-  //Autonomous
+  //Autonomous mode
   if (Autonomous) {
     Serial.println("Auto");
 
@@ -182,6 +188,4 @@ void parseData(String data) {
     // Error handling if data doesn't contain ';'
     Serial.println("Err");
   }
-
-  //Serial.println(axis_val);
 }
