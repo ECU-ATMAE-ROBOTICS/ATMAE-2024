@@ -61,25 +61,31 @@ async def main():
         instructions = None
         instructions = await controller.getControllerInput()
 
+        #Checks if theres inputs from the controller
         if instructions != None:
+        
             for instruction in instructions:
                 instructionID = int(instruction[:instruction.find(":")])
                 instructionValue = float(instruction[instruction.find(":")+1:])
                 
+                #Checks if the input is valid to send through serial
                 if instructionID in validSticks or instructionID in validTriggers:
                     
                     if prevInstructions.get(instructionID) != instructionValue:
                         arduino.write(instruction.encode("utf-8"))
 
+                    #Prevents repetitive values from taking up space in serial
                     prevInstructions[instructionID] = instructionValue
                 
                 elif instructionID not in controller.inputIDs.get("A"):
                     arduino.write(instruction.encode("utf-8"))
 
-        # Prints string in the buffer
+        # Interprets instructions from Arduino
         if arduino.in_waiting:
             response = arduino.readline().rstrip()
             print(response)
+
+            #Stops communication for set time
             if response.decode() == "kys":
                 print("Killing self")
                 await asyncio.sleep(15)
