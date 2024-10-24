@@ -11,7 +11,7 @@ This project involves building a robot designed to compete in a 1v1v1v1 object c
 - Raspberry Pi 4: Acts as the main control unit and recieves in the input from the Xbox controller and sends it to the Ardunio over serial. The Raspberry Pi is also used to stream a video to a phone.
 - Arduino Giga R1 WiFi: Handles low-level control of motors, sensors, and parses the serial from the Pi. It communicates with the Raspberry Pi via serial.
 - Router: Raspberry Pi and client connects to the router to stream camera to a client (in this case it was someones phone)
-- 
+
 ## Key Components:
 - Motors: REV-41-1291 Hex Motor
 - Smart Sensors: PiCamera 
