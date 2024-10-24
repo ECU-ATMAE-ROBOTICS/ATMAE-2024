@@ -1,5 +1,4 @@
 # ATMAE-2024 Shopping Cart
-# README IS WORK IN PROGRESS
 
 ## Overview
 This project involves building a robot designed to compete in a 1v1v1v1 object collection challenge at the ATMAE 2024 Student Robotics Compeition. The robot uses a Raspberry Pi 4 and an Arduino Giga R1 WiFi to control various components, including sensors and motors. Each robot competes to collect objects scattered in a square arena. As weel as many other ways to score points. The robot with the most points wins the round!
