@@ -1,3 +1,7 @@
+//ssh ubuntu@192.168.0.157
+// 192.168.0.228
+//port 9000
+
 #define LED_PIN 11
 
 #include <ezButton.h>
@@ -13,9 +17,10 @@ double turnValue;
 
 double LturnValue;
 double RturnValue;
+boolean isFrozen;
 
-double LMotor;
-double RMotor;
+double LMotor = 1500;
+double RMotor = 1500;
 
 String receivedData = "";
 
@@ -53,8 +58,8 @@ void loop() {
   //Freeze Button
   limitSwitch.loop();
   if (limitSwitch.isPressed()) {
-    axis_val = 0;
-    Serial.println("kys");
+    isFrozen=true;
+    //Serial.println("kys");
 
     leftservo.write(1500);
     rightservo.write(1500);
@@ -66,39 +71,52 @@ void loop() {
       delay(250);
     }
     digitalWrite(LED_PIN, HIGH);
+    delay(15);
+    Serial.println(limitSwitch.isPressed());
   }
 
-  // if (button_id == 11) {
-  //   // A button
-  //   for (pos = 0; pos <= 90; pos += 1) {
-  //     leftservo.write(pos);
-  //     rightservo.write(pos);
-  //     delay(15);
-  //   }
-  // }
-
-  //Autonomous
+  //Autonomous Mode
   if (Autonomous){
     Serial.println("Auto");
     
-    leftservo.write(1250);
-    rightservo.write(1750);
+    leftservo.write(1750);
+    rightservo.write(1250);
 
-    delay(4000);
+    delay(2000);
 
     Serial.println("Auto Ended");
     leftservo.write(1500);
     rightservo.write(1500);
 
+    if (limitSwitch.isPressed()) {
+      isFrozen=true;
+      //Serial.println("kys");
+
+      leftservo.write(1500);
+      rightservo.write(1500);
+      
+      for (int i = 1; i < 16; i++) {
+        digitalWrite(LED_PIN, HIGH);  // Turn LED on
+        delay(250);
+        digitalWrite(LED_PIN, LOW);  // Turn LED off
+        delay(250);
+        }
+      digitalWrite(LED_PIN, HIGH);
+      delay(15);
+      Serial.println(limitSwitch.isPressed());
+      }
+
     Autonomous = false;
   }
 
-  //*****This is to be tested, not sure if works****** */
+
   //Steers while moving
   if (triggerValue > 0.1 || triggerValue < -0.1){
     LMotor = 1500 - 500 * triggerValue * (1 - RturnValue);
     RMotor = 1500 + 500 * triggerValue * (1 - LturnValue);
 
+    leftservo.write(LMotor);
+    rightservo.write(RMotor);
   } 
   //Turn in place
   else if (button_id == 5){
@@ -106,20 +124,20 @@ void loop() {
     //Motors will both be set to the same value since they're inverted
     LMotor = 1500 + 500 * axis_val;
     RMotor = 1500 + 500 * axis_val;
+    leftservo.write(LMotor);
+    rightservo.write(RMotor);
   }
-
-  leftservo.write(LMotor);
-  rightservo.write(RMotor);
-
-
-
-  // if (button_id == 12 && axis_val == 1.0) {
-  //   //B Button
-  //   Serial.println("Stopped");
-  //   leftservo.writeMicroseconds(1500);   //90
-  //   rightservo.writeMicroseconds(1500);  //90
-  //}
+  //Robot is stopped
+  else{
+    leftservo.write(1500);
+    rightservo.write(1500);
+  }
 }
+
+/*
+Parses through instructions from Pi to determine 
+robot movement
+*/
 void parseData(String data) {
   int splitIndex = data.indexOf(':');  // Find where the ';' is
   if (splitIndex != -1) {              // Ensure ';' exists in the data
@@ -159,17 +177,9 @@ void parseData(String data) {
 
     //Pause button on controller for Auto
     if(button_id == 22 && !Autonomous && axis_val == 1.0){
-      axis_val = 0;
       Autonomous = true;
     }
-
-    // Debugging prints
-    //Serial.print("Raw Data: ");
-    //Serial.println(data);
-    //Serial.print("Button (as string): ");
-    //Serial.println(buttonStr);
-    //Serial.print("Axis Value (as string): ");
-    //Serial.println(axisStr);
+    
   } else {
     // Error handling if data doesn't contain ';'
     Serial.println("Err");
@@ -179,5 +189,5 @@ void parseData(String data) {
   //Serial.print("Parsed Button: ");
   //Serial.println(button_id);
   //Serial.print("Parsed Value: ");
-  //Serial.println(axis_val);
+  Serial.println(axis_val);
 }
