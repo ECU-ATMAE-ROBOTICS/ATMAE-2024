@@ -178,21 +178,10 @@ void parseData(String data) {
       Autonomous = true;
     }
 
-    // Debugging prints
-    //Serial.print("Raw Data: ");
-    //Serial.println(data);
-    //Serial.print("Button (as string): ");
-    //Serial.println(buttonStr);
-    //Serial.print("Axis Value (as string): ");
-    //Serial.println(axisStr);
   } else {
     // Error handling if data doesn't contain ';'
     Serial.println("Err");
   }
 
-  // Print the parsed values for debugging
-  //Serial.print("Parsed Button: ");
-  //Serial.println(button_id);
-  //Serial.print("Parsed Value: ");
-  Serial.println(axis_val);
+  //Serial.println(axis_val);
 }
