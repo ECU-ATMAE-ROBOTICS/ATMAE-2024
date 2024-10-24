@@ -4,13 +4,14 @@ import socketserver
 from threading import Condition
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import cv2
+from picamera2 import Picamera2
 
 #Make sure to change this if Pi's IP address changes
 HOST=   "0.0.0.0" # I think 0.0.0.0 should always work?
-capture = cv2.VideoCapture(4, cv2.CAP_V4L2)
+capture = Picamera2()
+capture.start()
 
 # Set some stuff, might help but not necessary
-capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
 
 PORT = 9000
 #PAGE="""\
@@ -32,9 +33,8 @@ class StreamHTTP(BaseHTTPRequestHandler):
         self.end_headers()
 
         while True:
-            rc, img = capture.read()
-            if not rc:
-                continue
+            img = capture.capture_array()
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) 
 
             r, buf = cv2.imencode(".jpg", img)
             self.wfile.write("--jpgboundary\r\n".encode())

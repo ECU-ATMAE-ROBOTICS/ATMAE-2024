@@ -2,8 +2,15 @@ import serial
 import pygame
 
 class XboxController():
-
+    """Class used to interface with an XboxController."""
     def __init__(self, controllerNum : int = 0, deadZone : float = 0):
+        """
+            Initialize an Xbox Controller
+
+            Args:
+                controllerNum (int) [default = 0]: Index to be used by pygame.joystick.Joystick().
+                deadZone (float) [default = 0]: Distance the stick can move from neutral position before registering input.
+        """
         pygame.init()
         
         self.controller = pygame.joystick.Joystick(controllerNum)
@@ -19,7 +26,7 @@ class XboxController():
                          "A":[id for id in range(self.numDpadButtons, self.total-self.numButtons)], 
                          "B":[id for id in range(self.total-self.numButtons , self.total)]}
     
-    def getDetectedButtons(self):
+    def getLayout(self):
         for buttonType in self.inputIDs.keys():
             print(f"{buttonType}: {self.inputIDs.get(buttonType)}")
     
@@ -33,8 +40,17 @@ class XboxController():
         return self.controller.get_hat(dPadID)
 
 
-    #Gets the values from the controller
+    
     async def getControllerInput(self):
+
+        """Retrieves the value of any new inputs from the value. The function only detects input if its value
+    has changed.
+
+    Returns:
+        string list: A list containing multiple values from multiple buttons/triggers/joysticks
+                     from the controller in the format: [Input ID]:[Input Value].
+
+    """
         message = []
         for event in pygame.event.get():
             if event.type == pygame.JOYBUTTONUP or  event.type == pygame.JOYBUTTONDOWN:
@@ -43,16 +59,18 @@ class XboxController():
                 message.append(value)
 
             if event.type == pygame.JOYAXISMOTION:
-                axisValue = round(self.controller.get_axis(event.axis),2)
+                axisValue = round(self.controller.get_axis(event.axis),1)
                 dictVal = self.inputIDs.get("A")
             
                 if axisValue > self.deadZone or axisValue < self.deadZone*-1 or event.axis == 4 or event.axis == 5:
                     value = f"{dictVal[event.axis]}:{axisValue}\n"
                     message.append(value)
                 else:
-                    
                     value = f"{dictVal[event.axis]}:0\n"
                     message.append(value)
+                    
+
+                            
 
             if event.type == pygame.JOYHATMOTION:
                 dictVal = self.inputIDs.get("D")

@@ -18,6 +18,8 @@ pip-selfcheck.json
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
+RaspberryPi/XboxController/__pycache__
+RaspberryPi/Util/__pycache__
 *.py[cod]
 *$py.class
 XboxController/__pycache__
