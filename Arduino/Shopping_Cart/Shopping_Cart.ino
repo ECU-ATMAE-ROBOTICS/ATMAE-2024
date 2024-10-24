@@ -17,7 +17,6 @@ double turnValue;
 
 double LturnValue;
 double RturnValue;
-boolean isFrozen;
 
 double LMotor = 1500;
 double RMotor = 1500;
@@ -45,6 +44,7 @@ void setup() {
 }
 
 void loop() {
+  //Read From Serial
   if (Serial.available()) {
     char receivedChar = Serial.read();
     if (receivedChar == '\n') {  // Correct the newline character
@@ -58,12 +58,12 @@ void loop() {
   //Freeze Button
   limitSwitch.loop();
   if (limitSwitch.isPressed()) {
-    isFrozen=true;
     //Serial.println("kys");
 
     leftservo.write(1500);
     rightservo.write(1500);
-    
+
+    //Flash Button
     for (int i = 1; i < 16; i++) {
       digitalWrite(LED_PIN, HIGH);  // Turn LED on
       delay(250);
@@ -75,69 +75,65 @@ void loop() {
     Serial.println(limitSwitch.isPressed());
   }
 
-  //Autonomous Mode
-  if (Autonomous){
+  //Autonomous
+  if (Autonomous) {
     Serial.println("Auto");
-    
+
+    //Move Forwards
     leftservo.write(1750);
     rightservo.write(1250);
 
     delay(2000);
 
+    //Stop
     Serial.println("Auto Ended");
     leftservo.write(1500);
     rightservo.write(1500);
 
     if (limitSwitch.isPressed()) {
-      isFrozen=true;
-      //Serial.println("kys");
 
       leftservo.write(1500);
       rightservo.write(1500);
-      
+
+      //Flash Button
       for (int i = 1; i < 16; i++) {
         digitalWrite(LED_PIN, HIGH);  // Turn LED on
         delay(250);
         digitalWrite(LED_PIN, LOW);  // Turn LED off
         delay(250);
-        }
+      }
       digitalWrite(LED_PIN, HIGH);
       delay(15);
       Serial.println(limitSwitch.isPressed());
-      }
+    }
 
     Autonomous = false;
   }
 
-
   //Steers while moving
-  if (triggerValue > 0.1 || triggerValue < -0.1){
+  if (triggerValue > 0.1 || triggerValue < -0.1) {
     LMotor = 1500 - 500 * triggerValue * (1 - RturnValue);
     RMotor = 1500 + 500 * triggerValue * (1 - LturnValue);
 
     leftservo.write(LMotor);
     rightservo.write(RMotor);
-  } 
+  }
   //Turn in place
-  else if (button_id == 5){
+  else if (button_id == 5) {
 
     //Motors will both be set to the same value since they're inverted
     LMotor = 1500 + 500 * axis_val;
     RMotor = 1500 + 500 * axis_val;
+    
     leftservo.write(LMotor);
     rightservo.write(RMotor);
-  }
-  //Robot is stopped
-  else{
+  } else {
     leftservo.write(1500);
     rightservo.write(1500);
   }
 }
 
-/*
-Parses through instructions from Pi to determine 
-robot movement
-*/
+//Parses the instuction recieved from the Pi
 void parseData(String data) {
   int splitIndex = data.indexOf(':');  // Find where the ';' is
   if (splitIndex != -1) {              // Ensure ';' exists in the data
@@ -145,30 +141,32 @@ void parseData(String data) {
     String axisStr = data.substring(splitIndex + 1);
 
     // Convert to int and double
-    button_id = buttonStr.toInt();
-    axis_val = axisStr.toDouble();
+    button_id = buttonStr.toInt(); //ID of the input
+    axis_val = axisStr.toDouble(); //Value of the input
 
-    //Throttle
+    //Forwards (RightTrigger)
     if (button_id == 10) {
       triggerValue = ((1 * (1 + axis_val)) / 2);
-    } else if (button_id == 9) {
+    } 
+    //Reverse (Left Trigger)
+    else if (button_id == 9) {
       triggerValue = -((1 * (1 + axis_val)) / 2);
     }
 
-    //Turning
+    //Turning (Left-Stick X axis)
     if (button_id == 5) {
-      
+
       //Left
       if (axis_val < 0) {
         RturnValue = -1 * axis_val;
         LturnValue = 0;
-      
-      //Right
+
+        //Right
       } else if (axis_val > 0) {
         LturnValue = axis_val;
         RturnValue = 0;
 
-      //Straight
+        //Straight
       } else {
         RturnValue = 0;
         LturnValue = 0;
@@ -176,10 +174,17 @@ void parseData(String data) {
     }
 
     //Pause button on controller for Auto
-    if(button_id == 22 && !Autonomous && axis_val == 1.0){
+    if (button_id == 22 && !Autonomous && axis_val == 1.0) {
       Autonomous = true;
     }
-    
+
+    // Debugging prints
+    //Serial.print("Raw Data: ");
+    //Serial.println(data);
+    //Serial.print("Button (as string): ");
+    //Serial.println(buttonStr);
+    //Serial.print("Axis Value (as string): ");
+    //Serial.println(axisStr);
   } else {
     // Error handling if data doesn't contain ';'
     Serial.println("Err");
