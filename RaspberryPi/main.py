@@ -86,8 +86,8 @@ async def main():
             print(response)
 
             #Stops communication for set time
-            if response.decode() == "kys":
-                print("Killing self")
+            if response.decode() == "kill":
+                print("Killing")
                 await asyncio.sleep(15)
                 print("Starting up")
 
