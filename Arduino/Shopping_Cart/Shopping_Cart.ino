@@ -75,7 +75,7 @@ void loop() {
   //Freeze Button
   limitSwitch.loop();
   if (limitSwitch.isPressed()) {
-    //Serial.println("kys");
+    //Serial.println("kill");
 
     leftservo.write(1500);
     rightservo.write(1500);
